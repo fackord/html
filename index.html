@@ -46,19 +46,20 @@
       display: flex;
       align-items: center;
       background-color: #1a1a1a;
-      border-radius: 1.5rem;
+      border-radius: 2rem;   /* softer rounded edges */
       padding: 1.5rem 2rem;
       max-width: 450px;
       width: 90%;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       z-index: 10;
       position: relative;
+      overflow: hidden;      /* ensures child elements respect the rounding */
     }
     
     .profile-pic {
       width: 80px;
       height: 80px;
-      border-radius: 1rem;
+      border-radius: 1.25rem; /* rounded profile image */
       background-color: #2a2a2a;
       background-size: cover;
       background-position: center;
@@ -114,7 +115,7 @@
 
     /* Version number styling */
     .version {
-      position: fixed;   /* fixed so it’s relative to the viewport */
+      position: fixed;
       top: 10px;
       right: 15px;
       font-size: 0.75rem;
@@ -129,7 +130,7 @@
   <div class="snow-container" id="snowContainer"></div>
 
   <!-- Version number -->
-  <div class="version">v1.0</div>
+  <div class="version">v2.0</div>
   
   <div class="profile-card">
     <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
