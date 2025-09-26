@@ -111,10 +111,25 @@
       user-select: none;
       z-index: 10;
     }
+
+    /* Version number styling */
+    .version {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 0.75rem;
+      color: white;
+      opacity: 0.7;
+      z-index: 20;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
+
+  <!-- Version number -->
+  <div class="version">v1.0</div>
   
   <div class="profile-card">
     <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
@@ -140,20 +155,15 @@
     let windX = 0;
     let windY = 0;
     
-    // Track mouse position
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      
-      // Calculate wind direction based on mouse position
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
-      
       windX = (mouseX - centerX) / window.innerWidth * 2;
       windY = (mouseY - centerY) / window.innerHeight * 1;
     });
     
-    // Snowflake class
     class Snowflake {
       constructor() {
         this.reset();
@@ -177,26 +187,19 @@
       }
       
       update() {
-        // Apply wind influence based on mouse position
         this.x += windX * 0.3 + this.drift;
         this.y += this.speed + windY * 0.1;
-        
-        // Reset if snowflake goes off screen
         if (this.y > window.innerHeight + 5 || 
             this.x < -50 || 
             this.x > window.innerWidth + 50) {
           this.reset();
         }
-        
-        // Update DOM element position
         this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
       }
     }
     
-    // Create snowflakes
     function createSnowflakes() {
       const numSnowflakes = Math.min(60, Math.floor(window.innerWidth / 20));
-      
       for (let i = 0; i < numSnowflakes; i++) {
         setTimeout(() => {
           snowflakes.push(new Snowflake());
@@ -204,31 +207,24 @@
       }
     }
     
-    // Animation loop
     function animate() {
       snowflakes.forEach(snowflake => snowflake.update());
       requestAnimationFrame(animate);
     }
     
-    // Handle window resize
     window.addEventListener('resize', () => {
-      // Remove existing snowflakes
       snowflakes.forEach(snowflake => {
         if (snowflake.element) {
           snowContainer.removeChild(snowflake.element);
         }
       });
       snowflakes.length = 0;
-      
-      // Create new snowflakes for new window size
       setTimeout(createSnowflakes, 100);
     });
     
-    // Initialize
     createSnowflakes();
     animate();
     
-    // Add some initial variety to snowflake positions
     setTimeout(() => {
       snowflakes.forEach(snowflake => {
         snowflake.y = Math.random() * window.innerHeight;
