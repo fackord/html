@@ -18,6 +18,26 @@
       position: relative;
       flex-direction: column;
       gap: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .snowflake {
+      position: absolute;
+      color: #fff;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.8;
+      font-size: 1rem;
     }
     
     .profile-card {
@@ -29,6 +49,8 @@
       max-width: 450px;
       width: 90%;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+      position: relative;
     }
     
     .profile-pic {
@@ -66,6 +88,8 @@
       display: inline-block;
       transition: all 0.2s ease;
       font-family: Arial, sans-serif;
+      z-index: 10;
+      position: relative;
     }
     
     .discord-button:hover {
@@ -83,10 +107,13 @@
       font-size: 0.75rem;
       color: #555;
       user-select: none;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
+  <div class="snow-container" id="snowContainer"></div>
+  
   <div class="profile-card">
     <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
     <div class="profile-info">
@@ -102,5 +129,115 @@
   <footer>
     © raccoon.site · china1
   </footer>
+
+  <script>
+    const snowContainer = document.getElementById('snowContainer');
+    const snowflakes = [];
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let windX = 0;
+    let windY = 0;
+    
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      // Calculate wind direction based on mouse position
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      windX = (mouseX - centerX) / window.innerWidth * 2;
+      windY = (mouseY - centerY) / window.innerHeight * 1;
+    });
+    
+    // Snowflake class
+    class Snowflake {
+      constructor() {
+        this.reset();
+        this.element = document.createElement('div');
+        this.element.innerHTML = '❄';
+        this.element.className = 'snowflake';
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
+        this.element.style.fontSize = this.size + 'px';
+        this.element.style.opacity = this.opacity;
+        snowContainer.appendChild(this.element);
+      }
+      
+      reset() {
+        this.x = Math.random() * (window.innerWidth + 200) - 100;
+        this.y = -10;
+        this.size = Math.random() * 8 + 8;
+        this.speed = Math.random() * 2 + 1;
+        this.opacity = Math.random() * 0.6 + 0.4;
+        this.drift = Math.random() * 2 - 1;
+        this.rotation = 0;
+        this.rotationSpeed = (Math.random() - 0.5) * 2;
+      }
+      
+      update() {
+        // Apply wind influence based on mouse position
+        this.x += windX * 0.5 + this.drift;
+        this.y += this.speed + windY * 0.2;
+        
+        this.rotation += this.rotationSpeed;
+        
+        // Reset if snowflake goes off screen
+        if (this.y > window.innerHeight + 10 || 
+            this.x < -100 || 
+            this.x > window.innerWidth + 100) {
+          this.reset();
+        }
+        
+        // Update DOM element
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
+        this.element.style.transform = `rotate(${this.rotation}deg)`;
+      }
+    }
+    
+    // Create snowflakes
+    function createSnowflakes() {
+      const numSnowflakes = Math.min(100, Math.floor(window.innerWidth / 15));
+      
+      for (let i = 0; i < numSnowflakes; i++) {
+        setTimeout(() => {
+          snowflakes.push(new Snowflake());
+        }, i * 100);
+      }
+    }
+    
+    // Animation loop
+    function animate() {
+      snowflakes.forEach(snowflake => snowflake.update());
+      requestAnimationFrame(animate);
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      // Remove existing snowflakes
+      snowflakes.forEach(snowflake => {
+        if (snowflake.element) {
+          snowContainer.removeChild(snowflake.element);
+        }
+      });
+      snowflakes.length = 0;
+      
+      // Create new snowflakes for new window size
+      setTimeout(createSnowflakes, 100);
+    });
+    
+    // Initialize
+    createSnowflakes();
+    animate();
+    
+    // Add some initial variety to snowflake positions
+    setTimeout(() => {
+      snowflakes.forEach(snowflake => {
+        snowflake.y = Math.random() * window.innerHeight;
+      });
+    }, 1000);
+  </script>
 </body>
 </html>
