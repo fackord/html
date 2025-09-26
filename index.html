@@ -33,11 +33,13 @@
     
     .snowflake {
       position: absolute;
-      color: #fff;
+      background-color: #fff;
+      border-radius: 50%;
       user-select: none;
       pointer-events: none;
       opacity: 0.8;
-      font-size: 1rem;
+      width: 2px;
+      height: 2px;
     }
     
     .profile-card {
@@ -156,55 +158,49 @@
       constructor() {
         this.reset();
         this.element = document.createElement('div');
-        this.element.innerHTML = '❄';
         this.element.className = 'snowflake';
         this.element.style.left = this.x + 'px';
         this.element.style.top = this.y + 'px';
-        this.element.style.fontSize = this.size + 'px';
+        this.element.style.width = this.size + 'px';
+        this.element.style.height = this.size + 'px';
         this.element.style.opacity = this.opacity;
         snowContainer.appendChild(this.element);
       }
       
       reset() {
-        this.x = Math.random() * (window.innerWidth + 200) - 100;
-        this.y = -10;
-        this.size = Math.random() * 8 + 8;
-        this.speed = Math.random() * 2 + 1;
-        this.opacity = Math.random() * 0.6 + 0.4;
-        this.drift = Math.random() * 2 - 1;
-        this.rotation = 0;
-        this.rotationSpeed = (Math.random() - 0.5) * 2;
+        this.x = Math.random() * (window.innerWidth + 100) - 50;
+        this.y = -5;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 1 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.3;
+        this.drift = Math.random() * 1 - 0.5;
       }
       
       update() {
         // Apply wind influence based on mouse position
-        this.x += windX * 0.5 + this.drift;
-        this.y += this.speed + windY * 0.2;
-        
-        this.rotation += this.rotationSpeed;
+        this.x += windX * 0.3 + this.drift;
+        this.y += this.speed + windY * 0.1;
         
         // Reset if snowflake goes off screen
-        if (this.y > window.innerHeight + 10 || 
-            this.x < -100 || 
-            this.x > window.innerWidth + 100) {
+        if (this.y > window.innerHeight + 5 || 
+            this.x < -50 || 
+            this.x > window.innerWidth + 50) {
           this.reset();
         }
         
-        // Update DOM element
-        this.element.style.left = this.x + 'px';
-        this.element.style.top = this.y + 'px';
-        this.element.style.transform = `rotate(${this.rotation}deg)`;
+        // Update DOM element position
+        this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
       }
     }
     
     // Create snowflakes
     function createSnowflakes() {
-      const numSnowflakes = Math.min(100, Math.floor(window.innerWidth / 15));
+      const numSnowflakes = Math.min(60, Math.floor(window.innerWidth / 20));
       
       for (let i = 0; i < numSnowflakes; i++) {
         setTimeout(() => {
           snowflakes.push(new Snowflake());
-        }, i * 100);
+        }, i * 150);
       }
     }
     
