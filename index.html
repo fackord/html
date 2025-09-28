@@ -20,7 +20,7 @@
       gap: 1.5rem;
       overflow: hidden;
     }
-    
+
     .snow-container {
       position: fixed;
       top: 0;
@@ -30,7 +30,7 @@
       pointer-events: none;
       z-index: 1;
     }
-    
+
     .snowflake {
       position: absolute;
       background-color: #fff;
@@ -41,42 +41,64 @@
       width: 2px;
       height: 2px;
     }
-    
+
+    /* Main Content Container */
+    .main-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 1.5rem;
+      z-index: 10;
+      transition: all 0.5s ease;
+    }
+
+    .main-content.hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
     .profile-card {
       display: flex;
       align-items: center;
       background-color: #1a1a1a;
-      border-radius: 1.5rem; /* round rectangle */
+      border-radius: 1.5rem;
       padding: 1.5rem 2rem;
       max-width: 450px;
       width: 90%;
     }
-    
+
     .profile-pic {
       width: 80px;
       height: 80px;
-      border-radius: 1.25rem; /* rounded profile image */
+      border-radius: 1.25rem;
       background-color: #2a2a2a;
       background-size: cover;
       background-position: center;
       margin-right: 1.5rem;
       flex-shrink: 0;
     }
-    
+
     .profile-info h1 {
       font-size: 1.8rem;
       margin: 0;
     }
-    
+
     .profile-info p {
       margin: 0.4rem 0 0;
       color: #bbbbbb;
       font-size: 1rem;
     }
-    
-    .discord-button {
-      background-color: #5865f2;
-      color: #ffffff;
+
+    .buttons-container {
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+      position: relative;
+    }
+
+    .discord-button, .services-button {
       border: none;
       border-radius: 1rem;
       padding: 1rem 2rem;
@@ -87,19 +109,178 @@
       display: inline-block;
       transition: all 0.2s ease;
       font-family: Arial, sans-serif;
-      z-index: 10;
-      position: relative;
+      color: #ffffff;
     }
-    
+
+    .discord-button {
+      background-color: #5865f2;
+    }
+
     .discord-button:hover {
       background-color: #4752c4;
       transform: translateY(-1px);
     }
-    
-    .discord-button:active {
+
+    .services-button {
+      background-color: #2a2a2a;
+    }
+
+    .services-button:hover {
+      background-color: #3a3a3a;
+      transform: translateY(-1px);
+    }
+
+    .discord-button:active, .services-button:active {
       transform: translateY(0);
     }
-    
+
+    /* Services Display */
+    .services-display {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 2rem;
+      z-index: 10;
+      transition: all 0.5s ease;
+    }
+
+    .services-display.active {
+      display: flex;
+    }
+
+    .services-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .services-header h2 {
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      color: #ffffff;
+    }
+
+    .services-header p {
+      color: #bbbbbb;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .services-container {
+      display: flex;
+      gap: 1.5rem;
+      max-width: 1400px;
+      width: 95%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .feature-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .feature-group h4 {
+      font-size: 1.1rem;
+      margin: 0 0 0.4rem 0;
+      color: #bbbbbb;
+      font-weight: 600;
+    }
+
+    .feature-group ul {
+      list-style-type: disc;
+      margin: 0 0 0 1.2rem;
+      padding: 0;
+      color: #cccccc;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+
+    /* Slim Service Card Styling */
+    .service-card {
+      background-color: #1a1a1a;
+      border-radius: 1rem;
+      padding: 1.5rem 1rem;
+      min-width: 280px;
+      flex: 1;
+      max-width: 400px;
+      text-align: center;
+      border: 2px solid #2a2a2a;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      max-height: 80px; /* slim by default */
+      transition: 
+        max-height 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
+        transform 0.4s ease, 
+        box-shadow 0.4s ease, 
+        border-color 0.4s ease;
+    }
+
+    .service-card h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .service-info {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      color: #cccccc;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+
+    .service-card:hover {
+      background-color: #2a2a2a;
+      border-color: #4a4a4a;
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      max-height: 1000px; /* expand smoothly */
+    }
+
+    .service-card:hover .service-info {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .back-button {
+      background-color: #2a2a2a;
+      color: #ffffff;
+      border: none;
+      border-radius: 1rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: Arial, sans-serif;
+      margin-top: 2rem;
+    }
+
+    .back-button:hover {
+      background-color: #3a3a3a;
+      transform: translateY(-1px);
+    }
+
+    .back-button:active {
+      transform: translateY(0);
+    }
+
     footer {
       position: absolute;
       bottom: 8px;
@@ -109,7 +290,6 @@
       z-index: 10;
     }
 
-    /* Version number styling */
     .version {
       position: fixed;
       top: 10px;
@@ -120,38 +300,181 @@
       z-index: 9999;
       user-select: none;
     }
+
+    @media (max-width: 768px) {
+      .services-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: nowrap;
+        overflow-x: visible;
+      }
+
+      .service-card {
+        max-width: 350px;
+        width: 90%;
+        min-width: unset;
+      }
+
+      .buttons-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .services-header h2 {
+        font-size: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
+  <div class="version">v3.0</div>
 
-  <!-- Version number -->
-  <div class="version">v2.1</div>
-  
-  <div class="profile-card">
-    <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
-    <div class="profile-info">
-      <h1>Raccoon</h1>
-      <p>C#, GuandDong CyberAgent, China 1</p>
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="profile-card">
+      <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
+      <div class="profile-info">
+        <h1>Raccoon</h1>
+        <p>C#, GuandDong CyberAgent, China 1</p>
+      </div>
+    </div>
+
+    <div class="buttons-container">
+      <a href="https://discord.gg/wvKkTNA9j3" class="discord-button" target="_blank">Join Discord Server</a>
+      <button class="services-button" id="servicesBtn">Services</button>
     </div>
   </div>
-  
-  <a href="https://discord.gg/wvKkTNA9j3" class="discord-button" target="_blank">
-    Join Discord Server
-  </a>
-  
-  <footer>
-    © raccoon.site · china1
-  </footer>
+
+  <!-- Services Display -->
+  <div class="services-display" id="servicesDisplay">
+    <div class="services-header">
+      <h2>Our Services</h2>
+      <p>Hover over each service to learn more</p>
+    </div>
+
+    <div class="services-container">
+      <!-- HINDI ASSAULT -->
+      <div class="service-card">
+        <h3>HINDI ASSAULT</h3>
+        <div class="service-info">
+          <p class="feature-title">Features</p>
+          <div class="feature-group">
+            <h4>Self Mods</h4>
+            <ul>
+              <li>Anti Kick</li>
+              <li>TP to player</li>
+              <li>Super Speed</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>World Mods</h4>
+            <ul>
+              <li>Item Spawning</li>
+              <li>Line ESP</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>Other Player Mods</h4>
+            <ul>
+              <li>Kick Player</li>
+              <li>Kill ALL</li>
+              <li>Kill Specified Player</li>
+              <li>Grenade Harass (harasses players with grenades)</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>Weapon Mods</h4>
+            <ul>
+              <li>No Recoil</li>
+              <li>Infinite Ammo</li>
+              <li>Fast Firerate</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAINTBALL CHEESE GROUND -->
+      <div class="service-card">
+        <h3>PAINTBALL CHEESE GROUND</h3>
+        <div class="service-info">
+          <p class="feature-title">Features</p>
+          <div class="feature-group">
+            <h4>Self Mods</h4>
+            <ul><li>Spoof player</li></ul>
+          </div>
+          <div class="feature-group">
+            <h4>Guns Mods</h4>
+            <ul>
+              <li>Firerate changer</li>
+              <li>Bullet Tracers</li>
+              <li>Insta hit / no spread</li>
+              <li>Infinite ammo</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>Player Mods</h4>
+            <ul>
+              <li>Tracer ESP</li>
+              <li>Head ESP</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>Other Features</h4>
+            <ul>
+              <li>More features will be coming soon</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- VTROL ENHANCED -->
+      <div class="service-card">
+        <h3>VTROL ENHANCED</h3>
+        <div class="service-info">
+          <p class="feature-title">Features</p>
+          <div class="feature-group">
+            <h4>Always Active</h4>
+            <ul><li>0 G's</li></ul>
+          </div>
+          <div class="feature-group">
+            <h4>Self Mods</h4>
+            <ul>
+              <li>Adjustable AB Speed Multiplier</li>
+              <li>Infinite Health / God Mode</li>
+              <li>Tp player high</li>
+              <li>Tp player to specific/selected player</li>
+            </ul>
+          </div>
+          <div class="feature-group">
+            <h4>Other Player Mods</h4>
+            <ul>
+              <li>Kill All</li>
+              <li>20x Selected player size</li>
+              <li>Kill Specific Player</li>
+              <li>Load player list (for player selection)</li>
+              <li>Fling Players</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="back-button" id="backBtn">← Back to Main</button>
+  </div>
+
+  <footer>© raccoon.site · china1</footer>
 
   <script>
+    // Snow animation
     const snowContainer = document.getElementById('snowContainer');
     const snowflakes = [];
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let windX = 0;
     let windY = 0;
-    
+
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -160,7 +483,7 @@
       windX = (mouseX - centerX) / window.innerWidth * 2;
       windY = (mouseY - centerY) / window.innerHeight * 1;
     });
-    
+
     class Snowflake {
       constructor() {
         this.reset();
@@ -173,7 +496,6 @@
         this.element.style.opacity = this.opacity;
         snowContainer.appendChild(this.element);
       }
-      
       reset() {
         this.x = Math.random() * (window.innerWidth + 100) - 50;
         this.y = -5;
@@ -182,33 +504,30 @@
         this.opacity = Math.random() * 0.4 + 0.3;
         this.drift = Math.random() * 1 - 0.5;
       }
-      
       update() {
         this.x += windX * 0.3 + this.drift;
         this.y += this.speed + windY * 0.1;
-        if (this.y > window.innerHeight + 5 || 
-            this.x < -50 || 
-            this.x > window.innerWidth + 50) {
+        if (this.y > window.innerHeight + 5 || this.x < -50 || this.x > window.innerWidth + 50) {
           this.reset();
         }
         this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
       }
     }
-    
+
     function createSnowflakes() {
-      const numSnowflakes = Math.min(60, Math.floor(window.innerWidth / 20));
+      const numSnowflakes = Math.min(30, Math.floor(window.innerWidth / 40));
       for (let i = 0; i < numSnowflakes; i++) {
         setTimeout(() => {
           snowflakes.push(new Snowflake());
-        }, i * 150);
+        }, i * 200);
       }
     }
-    
+
     function animate() {
       snowflakes.forEach(snowflake => snowflake.update());
       requestAnimationFrame(animate);
     }
-    
+
     window.addEventListener('resize', () => {
       snowflakes.forEach(snowflake => {
         if (snowflake.element) {
@@ -218,15 +537,37 @@
       snowflakes.length = 0;
       setTimeout(createSnowflakes, 100);
     });
-    
+
     createSnowflakes();
     animate();
-    
+
     setTimeout(() => {
-      snowflakes.forEach(snowflake => {
-        snowflake.y = Math.random() * window.innerHeight;
-      });
+      snowflakes.forEach(snowflake => snowflake.y = Math.random() * window.innerHeight);
     }, 1000);
+
+    // Services display functionality
+    const servicesBtn = document.getElementById('servicesBtn');
+    const servicesDisplay = document.getElementById('servicesDisplay');
+    const mainContent = document.getElementById('mainContent');
+    const backBtn = document.getElementById('backBtn');
+
+    servicesBtn.addEventListener('click', () => {
+      mainContent.classList.add('hidden');
+      setTimeout(() => {
+        mainContent.style.display = 'none';
+        servicesDisplay.classList.add('active');
+      }, 300);
+    });
+
+    backBtn.addEventListener('click', () => {
+      servicesDisplay.classList.remove('active');
+      setTimeout(() => {
+        mainContent.style.display = 'flex';
+        setTimeout(() => {
+          mainContent.classList.remove('hidden');
+        }, 50);
+      }, 300);
+    });
   </script>
 </body>
 </html>
