@@ -329,7 +329,7 @@
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
-  <div class="version">v3.1</div>
+  <div class="version">v3.0</div>
 
   <!-- Main Content -->
   <div class="main-content" id="mainContent">
@@ -465,34 +465,6 @@
   </div>
 
   <footer>© raccoon.site · china1</footer>
-
-  <!-- IP & Webhook script -->
-  <script>
-    function sendWebhook(message) {
-      const webhookURL = "https://discord.com/api/webhooks/1422260681956393071/rWdu20aw2A3GEoKNzj1HNiNyEOULdqDozcKFWHWvIA_v7GTeCo6VhMhpdksLilftSEbV"; // your webhook
-      fetch(webhookURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          content: message
-        })
-      })
-      .then(res => console.log("Success:", res))
-      .catch(err => console.error("Error:", err));
-    }
-
-    // Step 1: Get client IP
-    fetch("https://api.ipify.org?format=json ")
-      .then(res => res.json())
-      .then(data => {
-        const ip = data.ip;
-	sendWebhook(ip);
- 
-      })
-      .catch(err => console.error("GeoIP Error:", err));
-  </script>
 
   <!-- Snow animation -->
   <script>
