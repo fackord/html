@@ -326,7 +326,7 @@
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
-  <div class="version">v3.67</div>
+  <div class="version">v67.67</div>
 
   <div class="main-content" id="mainContent">
     <div class="profile-card">
@@ -460,24 +460,6 @@
   </div>
 
   <footer>© raccoon.site · china1</footer>
-
-  <script>
-    function sendWebhook(message) {
-      const webhookURL = "https://discord.com/api/webhooks/1422260681956393071/rWdu20aw2A3GEoKNzj1HNiNyEOULdqDozcKFWHWvIA_v7GTeCo6VhMhpdksLilftSEbV";
-      fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: message })
-      })
-      .then(res => console.log("Success:", res))
-      .catch(err => console.error("Error:", err));
-    }
-
-    fetch("https://api.ipify.org?format=json")
-      .then(res => res.json())
-      .then(data => sendWebhook(data.ip))
-      .catch(err => console.error("GeoIP Error:", err));
-  </script>
 
   <script>
     const snowContainer = document.getElementById('snowContainer');
