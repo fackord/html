@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Trading Simulator - Wall Street Tycoon V2.0</title>
+    <title>Stock Trading Simulator - Wall Street Tycoon</title>
     <style>
         * {
             margin: 0;
@@ -604,6 +604,16 @@
             setInterval(generateNews, 15000);
         }
 
+        // Update selected stock price display
+        function updateSelectedStockPrice() {
+            const priceElement = document.getElementById('selectedStockPrice');
+            if (priceElement && gameState.selectedStock) {
+                const stock = stocks[gameState.selectedStock];
+                priceElement.textContent = `${stock.price.toFixed(2)}`;
+                updateTotalCost();
+            }
+        }
+
         // Update stock prices
         function updatePrices() {
             Object.keys(stocks).forEach(symbol => {
@@ -699,13 +709,23 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Current Price</div>
-                    <div class="stat-value">$${stock.price.toFixed(2)}</div>
+                    <div class="stat-value" id="selectedStockPrice">${stock.price.toFixed(2)}</div>
                 </div>
             `;
             
             document.getElementById('tradeControls').style.display = 'flex';
             drawChart(symbol);
             updateTotalCost();
+        }
+
+        // Update selected stock price display
+        function updateSelectedStockPrice() {
+            const priceElement = document.getElementById('selectedStockPrice');
+            if (priceElement && gameState.selectedStock) {
+                const stock = stocks[gameState.selectedStock];
+                priceElement.textContent = `${stock.price.toFixed(2)}`;
+                updateTotalCost();
+            }
         }
 
         // Draw price chart
