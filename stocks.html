@@ -482,11 +482,11 @@
             <span class="close-modal" onclick="closeChartModal()">&times;</span>
             <h3 id="chartTitle">Stock Chart</h3>
             <div style="margin-bottom: 15px;">
-                <button class="chart-range-btn active" onclick="changeChartRange('1d')">1D</button>
-                <button class="chart-range-btn" onclick="changeChartRange('5d')">5D</button>
-                <button class="chart-range-btn" onclick="changeChartRange('1mo')">1M</button>
-                <button class="chart-range-btn" onclick="changeChartRange('3mo')">3M</button>
-                <button class="chart-range-btn" onclick="changeChartRange('1y')">1Y</button>
+                <button class="chart-range-btn active" onclick="changeChartRange('1m')">1M</button>
+                <button class="chart-range-btn" onclick="changeChartRange('5m')">5M</button>
+                <button class="chart-range-btn" onclick="changeChartRange('15m')">15M</button>
+                <button class="chart-range-btn" onclick="changeChartRange('1h')">1H</button>
+                <button class="chart-range-btn" onclick="changeChartRange('all')">ALL</button>
             </div>
             <div id="chartContainer" style="background: #0a0e27; padding: 20px; border-radius: 5px; min-height: 400px;">
                 <canvas id="stockChart"></canvas>
@@ -539,13 +539,15 @@
         let portfolio = {};
         let transactions = [];
         let stockData = {};
+        let priceHistory = {};
         let settings = {
             startingBalance: 100000,
             theme: 'dark'
         };
         let currentChart = null;
         let currentChartSymbol = null;
-        let currentChartRange = '1d';
+        let currentChartRange = '1m';
+        let sessionStartTime = Date.now();
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -607,6 +609,14 @@
                     changePercent: (change / basePrice) * 100,
                     volume: Math.floor(Math.random() * 10000000)
                 };
+                
+                // Initialize price history
+                if (!priceHistory[symbol]) {
+                    priceHistory[symbol] = [{
+                        timestamp: Date.now(),
+                        price: basePrice
+                    }];
+                }
             }
             return stocks;
         }
@@ -692,9 +702,9 @@
                 btn.classList.remove('active');
             });
             document.querySelector('.chart-range-btn').classList.add('active');
-            currentChartRange = '1d';
+            currentChartRange = '1m';
             
-            await loadStockChart(symbol, currentChartRange);
+            loadStockChart(symbol, currentChartRange);
         }
 
         // Close chart modal
@@ -707,7 +717,7 @@
         }
 
         // Change chart range
-        async function changeChartRange(range) {
+        function changeChartRange(range) {
             currentChartRange = range;
             document.querySelectorAll('.chart-range-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -715,194 +725,168 @@
             event.target.classList.add('active');
             
             if (currentChartSymbol) {
-                await loadStockChart(currentChartSymbol, range);
+                loadStockChart(currentChartSymbol, range);
             }
         }
 
-        // Load stock chart from Yahoo Finance
-        async function loadStockChart(symbol, range) {
+        // Load stock chart from price history
+        function loadStockChart(symbol, range) {
             const chartContainer = document.getElementById('chartContainer');
-            chartContainer.innerHTML = '<canvas id="stockChart"></canvas><div style="text-align: center; padding: 20px; color: #8892b0;">Loading chart data...</div>';
             
-            try {
-                // Yahoo Finance API endpoint
-                const rangeMap = {
-                    '1d': { range: '1d', interval: '5m' },
-                    '5d': { range: '5d', interval: '15m' },
-                    '1mo': { range: '1mo', interval: '1d' },
-                    '3mo': { range: '3mo', interval: '1d' },
-                    '1y': { range: '1y', interval: '1wk' }
-                };
-                
-                const { range: apiRange, interval } = rangeMap[range];
-                const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=${apiRange}&interval=${interval}`;
-                
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.chart && data.chart.result && data.chart.result[0]) {
-                    const result = data.chart.result[0];
-                    const timestamps = result.timestamp;
-                    const prices = result.indicators.quote[0];
-                    
-                    // Prepare chart data
-                    const labels = timestamps.map(ts => {
-                        const date = new Date(ts * 1000);
-                        if (range === '1d') {
-                            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                        } else if (range === '5d') {
-                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' });
-                        } else {
-                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                        }
-                    });
-                    
-                    const closePrices = prices.close.filter(p => p !== null);
-                    const openPrice = closePrices[0];
-                    const currentPrice = closePrices[closePrices.length - 1];
-                    const priceChange = currentPrice - openPrice;
-                    const priceChangePercent = (priceChange / openPrice) * 100;
-                    
-                    // Update stock data with real price
-                    if (stockData[symbol]) {
-                        stockData[symbol].price = currentPrice;
-                        stockData[symbol].change = priceChange;
-                        stockData[symbol].changePercent = priceChangePercent;
-                    }
-                    
-                    // Destroy existing chart
-                    if (currentChart) {
-                        currentChart.destroy();
-                    }
-                    
-                    // Create new chart
-                    chartContainer.innerHTML = '<canvas id="stockChart"></canvas>';
-                    const ctx = document.getElementById('stockChart').getContext('2d');
-                    
-                    const lineColor = priceChange >= 0 ? '#4ade80' : '#ef4444';
-                    
-                    currentChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Price',
-                                data: prices.close,
-                                borderColor: lineColor,
-                                backgroundColor: lineColor + '20',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.4,
-                                pointRadius: 0,
-                                pointHoverRadius: 5,
-                                pointBackgroundColor: lineColor,
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2
-                            }]
+            if (!priceHistory[symbol] || priceHistory[symbol].length === 0) {
+                chartContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #8892b0;">No price history available yet. Chart will update as prices change.</div>';
+                return;
+            }
+            
+            // Filter data based on range
+            const now = Date.now();
+            const rangeMs = {
+                '1m': 60 * 1000,
+                '5m': 5 * 60 * 1000,
+                '15m': 15 * 60 * 1000,
+                '1h': 60 * 60 * 1000,
+                'all': now - sessionStartTime + 1000
+            };
+            
+            const cutoffTime = now - rangeMs[range];
+            const filteredData = priceHistory[symbol].filter(point => point.timestamp >= cutoffTime);
+            
+            if (filteredData.length === 0) {
+                chartContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #8892b0;">Not enough data for this time range yet.</div>';
+                return;
+            }
+            
+            // Prepare chart data
+            const labels = filteredData.map(point => {
+                const date = new Date(point.timestamp);
+                const elapsed = Math.floor((point.timestamp - sessionStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            });
+            
+            const prices = filteredData.map(point => point.price);
+            const openPrice = filteredData[0].price;
+            const currentPrice = filteredData[filteredData.length - 1].price;
+            const priceChange = currentPrice - openPrice;
+            const priceChangePercent = (priceChange / openPrice) * 100;
+            
+            const highPrice = Math.max(...prices);
+            const lowPrice = Math.min(...prices);
+            
+            // Destroy existing chart
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            // Create new chart
+            chartContainer.innerHTML = '<canvas id="stockChart"></canvas>';
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            
+            const lineColor = priceChange >= 0 ? '#4ade80' : '#ef4444';
+            
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Price',
+                        data: prices,
+                        borderColor: lineColor,
+                        backgroundColor: lineColor + '20',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: lineColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2,
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            aspectRatio: 2,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                tooltip: {
-                                    mode: 'index',
-                                    intersect: false,
-                                    backgroundColor: '#151932',
-                                    titleColor: '#e0e0e0',
-                                    bodyColor: '#e0e0e0',
-                                    borderColor: '#2a3f5f',
-                                    borderWidth: 1,
-                                    callbacks: {
-                                        label: function(context) {
-                                            return 'Price: $' + context.parsed.y.toFixed(2);
-                                        }
-                                    }
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#151932',
+                            titleColor: '#e0e0e0',
+                            bodyColor: '#e0e0e0',
+                            borderColor: '#2a3f5f',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Price: $' + context.parsed.y.toFixed(2);
                                 }
-                            },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        color: '#2a3f5f',
-                                        drawBorder: false
-                                    },
-                                    ticks: {
-                                        color: '#8892b0',
-                                        maxTicksLimit: 8
-                                    }
-                                },
-                                y: {
-                                    grid: {
-                                        color: '#2a3f5f',
-                                        drawBorder: false
-                                    },
-                                    ticks: {
-                                        color: '#8892b0',
-                                        callback: function(value) {
-                                            return '$' + value.toFixed(2);
-                                        }
-                                    }
-                                }
-                            },
-                            interaction: {
-                                intersect: false,
-                                mode: 'index'
                             }
                         }
-                    });
-                    
-                    // Update chart info
-                    document.getElementById('chartInfo').innerHTML = `
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                            <div>
-                                <div style="color: #8892b0; font-size: 0.9em;">Current Price</div>
-                                <div style="font-weight: bold; font-size: 1.3em;">$${currentPrice.toFixed(2)}</div>
-                            </div>
-                            <div>
-                                <div style="color: #8892b0; font-size: 0.9em;">Change</div>
-                                <div class="${priceChange >= 0 ? 'positive' : 'negative'}" style="font-weight: bold; font-size: 1.3em;">
-                                    ${priceChange >= 0 ? '+' : ''}${priceChange.toFixed(2)} (${priceChangePercent.toFixed(2)}%)
-                                </div>
-                            </div>
-                            <div>
-                                <div style="color: #8892b0; font-size: 0.9em;">Day High</div>
-                                <div style="font-weight: bold; font-size: 1.3em;">${Math.max(...prices.high.filter(p => p !== null)).toFixed(2)}</div>
-                            </div>
-                            <div>
-                                <div style="color: #8892b0; font-size: 0.9em;">Day Low</div>
-                                <div style="font-weight: bold; font-size: 1.3em;">${Math.min(...prices.low.filter(p => p !== null)).toFixed(2)}</div>
-                            </div>
-                            <div>
-                                <div style="color: #8892b0; font-size: 0.9em;">Volume</div>
-                                <div style="font-weight: bold; font-size: 1.3em;">${(prices.volume.reduce((a, b) => a + (b || 0), 0) / 1000000).toFixed(2)}M</div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Update displays with new price
-                    updatePortfolioDisplay();
-                    updateBalanceDisplay();
-                    displayStocks(Object.values(stockData));
-                    
-                } else {
-                    throw new Error('Invalid response from Yahoo Finance');
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#2a3f5f',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#8892b0',
+                                maxTicksLimit: 8
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: '#2a3f5f',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#8892b0',
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
                 }
-                
-            } catch (error) {
-                console.error('Error loading chart:', error);
-                chartContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #ef4444;">
-                        <div style="font-size: 2em; margin-bottom: 10px;">⚠️</div>
-                        <div>Failed to load chart data</div>
-                        <div style="font-size: 0.9em; margin-top: 10px; color: #8892b0;">
-                            ${error.message || 'Please try again later'}
+            });
+            
+            // Update chart info
+            const totalVolume = filteredData.reduce((sum, point) => sum + (stockData[symbol]?.volume || 0), 0);
+            
+            document.getElementById('chartInfo').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div>
+                        <div style="color: #8892b0; font-size: 0.9em;">Current Price</div>
+                        <div style="font-weight: bold; font-size: 1.3em;">$${currentPrice.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #8892b0; font-size: 0.9em;">Change (Session)</div>
+                        <div class="${priceChange >= 0 ? 'positive' : 'negative'}" style="font-weight: bold; font-size: 1.3em;">
+                            ${priceChange >= 0 ? '+' : ''}$${priceChange.toFixed(2)} (${priceChangePercent.toFixed(2)}%)
                         </div>
                     </div>
-                `;
-            }
+                    <div>
+                        <div style="color: #8892b0; font-size: 0.9em;">High</div>
+                        <div style="font-weight: bold; font-size: 1.3em;">${highPrice.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #8892b0; font-size: 0.9em;">Low</div>
+                        <div style="font-weight: bold; font-size: 1.3em;">${lowPrice.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #8892b0; font-size: 0.9em;">Data Points</div>
+                        <div style="font-weight: bold; font-size: 1.3em;">${filteredData.length}</div>
+                    </div>
+                </div>
+            `;
         }
 
         // Open trade modal
@@ -1225,13 +1209,34 @@
                         const currentPrice = stockData[symbol].price;
                         const volatility = 0.02;
                         const change = currentPrice * (Math.random() - 0.5) * volatility;
-                        stockData[symbol].price = Math.max(0.01, currentPrice + change);
+                        const newPrice = Math.max(0.01, currentPrice + change);
+                        
+                        stockData[symbol].price = newPrice;
                         stockData[symbol].change = change;
                         stockData[symbol].changePercent = (change / currentPrice) * 100;
+                        
+                        // Add to price history
+                        if (!priceHistory[symbol]) {
+                            priceHistory[symbol] = [];
+                        }
+                        priceHistory[symbol].push({
+                            timestamp: Date.now(),
+                            price: newPrice
+                        });
+                        
+                        // Keep only last 1 hour of data (720 data points at 5 second intervals)
+                        if (priceHistory[symbol].length > 720) {
+                            priceHistory[symbol].shift();
+                        }
                     }
                     displayStocks(Object.values(stockData));
                     updatePortfolioDisplay();
                     updateBalanceDisplay();
+                    
+                    // Update chart if open
+                    if (currentChart && currentChartSymbol) {
+                        loadStockChart(currentChartSymbol, currentChartRange);
+                    }
                 }
             }, 5000);
         }
@@ -1273,6 +1278,17 @@
                 balance = settings.startingBalance;
                 portfolio = {};
                 transactions = [];
+                priceHistory = {};
+                sessionStartTime = Date.now();
+                
+                // Reinitialize price history for current stocks
+                for (const symbol in stockData) {
+                    priceHistory[symbol] = [{
+                        timestamp: Date.now(),
+                        price: stockData[symbol].price
+                    }];
+                }
+                
                 updateBalanceDisplay();
                 updatePortfolioDisplay();
                 updateTransactionHistory();
